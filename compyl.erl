@@ -46,32 +46,34 @@
 % {ok, Tokens, _N} = erl_scan:string(Str),
 
 
-keyfindall(Key, N, Tuplelist) ->
-	lists:filter(fun(Tup) -> 
-					case is_tuple(Tup) of
-						true -> case element(N, Tup) of Key -> true; _ -> false end;
-						false -> false
-					end end,
-				 Tuplelist).
+test() ->
+	{ok, Bin} = file:read_file("multiline_test.erl"),
+	get_compiler_options(strip_comments(Bin)).
+
 
 file(Path) ->
 	file(Path, []).
 file(Path, Options) ->
 	{ok, Bin} = file:read_file(Path),
-	string(binary_to_list(Bin), Options).
+	string(Bin, Options).
 
 string(S) ->
 	string(S, []).
+
 string(S, Options) ->
-	{ok, Toks, _} = erl_scan:string(S),
-	FileOpts = options_from_tokens(Toks),
+	FileOpts = get_compiler_options(S),
+	
 	AllOpts = Options ++ FileOpts,
 	
-	% to (potentially) avoid scanning the same string twice,
-	%  we could skip this step if keyfindall(prescan...) == []
+	% apply prescan_transforms to raw binary
 	S2 = apply_transforms(keyfindall(prescan_transform, 1, AllOpts), S),
-	{ok,Tokens, _} = erl_scan:string(S2),
+	S3 = binary_to_list(iolist_to_binary(S2)),
+	
+	% scan to tokens, and apply scan_transforms to list of tokens
+	{ok,Tokens, _} = erl_scan:string(S3),
 	Tokens2 = apply_transforms(keyfindall(scan_transform, 1, AllOpts), Tokens),
+	
+	% collapse tokens to string, write string to temp file, then compile temp file
 	Path = new_temp_file_path(),
 	ok = file:write_file(Path, tokens_to_string(Tokens2)),
 	case compile:file(Path, [binary, no_error_module_mismatch, verbose, report]) of
@@ -81,11 +83,41 @@ string(S, Options) ->
 		Other -> Other
 	end.
 	
-	% ideally, we'd parse, apply the parse transforms, then compile
-	%  but to make things easy, we'll just write the tokens to a temp file,
-	%  and run it through the compiler
-	
-	
+
+strip_comments(Bin) ->
+	iolist_to_binary(re:replace(Bin, ["%","[^\\n]*"], [], [global])).
+
+get_compiler_options(Bin) ->
+	Opts = case re:run(Bin, ["compile", "\\s*", "\\(", "([^)]+)", "\\)"], [global]) of
+			nomatch -> [];
+			{match, [{_,_},{_,_}]=L} -> [L];
+			{match, List} -> List
+		   end,
+	% Opts.
+	TermBins = lists:map(fun([{_,_},{S,L}]) -> B = substr_binary(Bin,S,L), 
+											   <<B/binary, $.>> end, Opts),
+	% TermBins.
+	Terms = lists:map(fun(B) -> {ok, Tokens, _} = erl_scan:string(binary_to_list(B)),
+								Term = case erl_parse:parse_term(Tokens) of
+										{ok, T} -> T;
+										{error, Info} ->
+											io:format("failed to parse: ~p. error: ~p. skipping.~n", [Tokens, Info]),
+											[]
+									   end,
+								Term end, TermBins),
+	lists:flatten(Terms).
+
+% return substring, from Start to End inclusive
+%  assuming 8 bit characters
+substr_binary(Bin, Start, Length) ->
+	substr_binary(Bin, Start, Length, 8).
+substr_binary(Bin, Start, Length, Size) ->
+	S = Start * Size,
+	M = Length * Size,
+	<<_:S, Out:M, _/binary>> = Bin,
+	<<Out:M>>.
+
+
 random_letter() ->
 	random:uniform($z - $a) + $a.
 listof(0, _) -> [];
@@ -118,6 +150,15 @@ tokens_to_string([H|Rest], Acc, Line) ->
 
 tokens_to_string([], Acc, _Line) ->
 	lists:concat(lists:reverse(Acc)).
+
+
+keyfindall(Key, N, Tuplelist) ->
+	lists:filter(fun(Tup) -> 
+					case is_tuple(Tup) of
+						true -> case element(N, Tup) of Key -> true; _ -> false end;
+						false -> false
+					end end,
+				 Tuplelist).
 
 
 %% capture(List, fun(X)->true/false, fun(X)->true/false)
@@ -155,28 +196,3 @@ options_from_tokens(Tokens) ->
 			{value, Options, _Bindings} = erl_eval:exprs(Parsed, [{'Ident', fun(X)->X end}]),
 			Options
 	end.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

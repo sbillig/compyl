@@ -1,12 +1,14 @@
 -module(multilinetest).
 
+% {prescan_transform, mymod, dostuff},
+% {scan_transform, multiline_comments, strip_comments}
+% {parse_transform, mod}
+
 -compile([
 	export_all,
-	% {prescan_transform, mymod, dostuff},
-	% {prescan_transform, othermod, morestuff},
-	{scan_transform, multiline_comments, strip_comments}
-	% {parse_transform, mymod} % using standard compile option for now
+	{prescan_transform, prescan_stuff, change_f_to_h}
 ]).
+-compile({scan_transform, multiline_comments, strip_comments}).
 
 ::"this is a comment
 ooga booga booga
