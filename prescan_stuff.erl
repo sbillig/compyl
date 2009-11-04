@@ -8,6 +8,35 @@ debird(Bin) ->
 	B = re:replace(Bin, ["^\\s*[^>\\n][^\\n]*"], "", [global,multiline]),
 	re:replace(B, ["^\\s*>\\s*"], "", [global,multiline]).
 
+
+delatex(Bin) ->
+	case re:run(Bin, "(.*?)\\\\begin{code}(.*?)\\\\end{code}", [global, dotall]) of
+		nomatch -> Bin;
+		{match, [{_,_},{_,_},{_,_}]=L} -> delatex(Bin, [L]);
+		{match, Matches} -> delatex(Bin, Matches)
+	end.
+
+delatex(Bin, Matches) ->
+	{ok, NotANewline} = re:compile("[^\\n]+"),
+	Out = lists:map(fun([_All, {NonCodeStart, NonCodeLength}, {CodeStart, CodeLength}]) ->
+					
+						NonCode = compyl:substr_binary(Bin, NonCodeStart, NonCodeLength),
+						Code = compyl:substr_binary(Bin, CodeStart, CodeLength),
+					
+						[re:replace(NonCode, NotANewline, "", [global]), Code]
+					end,
+					Matches),
+	iolist_to_binary(Out).
+
+
+	% {ok, BeginRE} = re:compile("\\\\begin{code}"),
+	% re:run(BinLines, BeginRE).
+
+% delatex(Bin) ->
+% 	BinLines = re:split(Bin, "\\n"),
+% 	{ok, BeginRE} = re:compile("\\\\begin{code}"),
+% 	re:run(BinLines, BeginRE).
+
 % count_newlines(Bin) ->
 % 	true.
 % delatex(Bin) ->
@@ -25,6 +54,6 @@ debird(Bin) ->
 	% Rest = N2 * \n ++ binary_substr(Bin, Pos, Length)
 	
 	% etc.	
-% delatex_test() ->
-% 	{ok, Bin} = file:read_file("latex_test.erl"),
-% 	delatex(Bin).
+delatex_test() ->
+	{ok, Bin} = file:read_file("latex_test.erl"),
+	delatex(Bin).

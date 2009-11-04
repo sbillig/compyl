@@ -1,0 +1,110 @@
+%
+%  untitled
+%
+%  Created by sean on .
+%  Copyright (c)  __MyCompanyName__. All rights reserved.
+%
+\documentclass[]{article}
+
+% Use utf-8 encoding for foreign characters
+\usepackage[utf8]{inputenc}
+
+% Setup for fullpage use
+\usepackage{fullpage}
+
+% Uncomment some of the following if you use the features
+%
+% Running Headers and footers
+%\usepackage{fancyhdr}
+
+% Multipart figures
+%\usepackage{subfigure}
+
+% More symbols
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage{latexsym}
+
+% Surround parts of graphics with box
+\usepackage{boxedminipage}
+
+% Package for including code in the document
+\usepackage{listings}
+
+% If you want to generate a toc for each chapter (use with book)
+\usepackage{minitoc}
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%\pdffalse % we are not running PDFLaTeX
+%\else
+%\pdfoutput=1 % we are running PDFLaTeX
+%\pdftrue
+%\fi
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+
+\usepackage{verbatim}
+\newenvironment{code}{\footnotesize\verbatim}{\endverbatim\normalsize}
+
+\title{A LaTeX Article}
+\author{  }
+
+\date{}
+
+\begin{document}
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+\maketitle
+
+
+\begin{abstract}
+\end{abstract}
+
+\section{Introduction}
+
+This is the introduction to my fantastic Erlang package.  Here's how the package starts:
+
+\begin{code}
+	-module(latex_test2).
+	-compile(export_all).
+\end{code}
+
+Since this is a ``Literate Programming'' document, we need to tell the compiler
+to strip out everything that isn't code.
+
+\begin{code}
+	-compile({prescan_transform, prescan_stuff, delatex}).
+\end{code}
+
+And now we can add some functions, as per usual.
+
+\begin{code}
+	double(X) -> X*2.
+\end{code}
+
+This one should trigger an ``unused variable'' warning.
+\begin{code}
+	add(X,Y,Z) -> X + Y.
+\end{code}
+
+
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{}
+\end{document}
