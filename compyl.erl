@@ -136,6 +136,7 @@ tokens_to_string(Tokens) ->
 	tokens_to_string(Tokens, [], 1).
 tokens_to_string([H|Rest], Acc, Line) ->
 	case H of
+		{string, N, Str} -> A = lists:concat(["\"", Str, "\""]);
 		{_Type, N, A} -> ok;
 		{dot, N} -> A = '.';
 		{A, N} -> ok
