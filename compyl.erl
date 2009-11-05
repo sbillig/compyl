@@ -50,6 +50,17 @@ test() ->
 	{ok, Bin} = file:read_file("multiline_test.erl"),
 	get_compiler_options(strip_comments(Bin)).
 
+c(Path) ->
+	c(Path, []).
+c(Path, Options) ->
+	case file(Path, Options) of
+		{ok, Mod} -> 
+			code:purge(Mod),
+			code:load_file(Mod),
+			{ok, Mod};
+		Other ->
+			Other
+	end.
 
 file(Path) ->
 	file(Path, []).
