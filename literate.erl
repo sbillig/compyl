@@ -1,25 +1,26 @@
--module (prescan_stuff).
+-module (literate).
 -compile(export_all).
 
 change_f_to_h(Bin) ->
 	re:replace(Bin, ["f\\(\\)"], "h()", [global]).
 	
-debird(Bin) ->
+bird(Bin) ->
 	B = re:replace(Bin, ["^\\s*[^>\\n][^\\n]*"], "", [global,multiline]),
-	re:replace(B, ["^\\s*>\\s*"], "", [global,multiline]).
+	B2 = re:replace(B, ["^\\s*>\\s*"], "", [global,multiline]),
+	iolist_to_binary(B2).
 
-debird_test() ->
+bird_test() ->
 	{ok, Bin} = file:read_file("test/bird_test.erl"),
-	debird(Bin).
+	bird(Bin).
 
-delatex(Bin) ->
+latex(Bin) ->
 	case re:run(Bin, "(.*?)\\\\begin{code}(.*?)\\\\end{code}", [global, dotall]) of
 		nomatch -> Bin;
-		{match, [{_,_},{_,_},{_,_}]=L} -> delatex(Bin, [L]);
-		{match, Matches} -> delatex(Bin, Matches)
+		{match, [{_,_},{_,_},{_,_}]=L} -> latex(Bin, [L]);
+		{match, Matches} -> latex(Bin, Matches)
 	end.
 
-delatex(Bin, Matches) ->
+latex(Bin, Matches) ->
 	{ok, NotANewline} = re:compile("[^\\n]+"),
 	Out = lists:map(fun([_All, {NonCodeStart, NonCodeLength}, {CodeStart, CodeLength}]) ->
 					
@@ -31,9 +32,9 @@ delatex(Bin, Matches) ->
 					Matches),
 	iolist_to_binary(Out).
 
-delatex_test() ->
+latex_test() ->
 	{ok, Bin} = file:read_file("test/latex_test.erl"),
-	delatex(Bin).
+	latex(Bin).
 
 markdown(Bin) ->
 	B = re:replace(Bin, "^(?!    |\\t)[^\\n]+","", [global,multiline]),
