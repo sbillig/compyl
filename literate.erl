@@ -10,7 +10,7 @@ bird(Bin) ->
 	iolist_to_binary(B2).
 
 bird_test() ->
-	{ok, Bin} = file:read_file("test/bird_test.erl"),
+	{ok, Bin} = file:read_file("test/bird_test.lerl"),
 	bird(Bin).
 
 latex(Bin) ->
@@ -33,7 +33,7 @@ latex(Bin, Matches) ->
 	iolist_to_binary(Out).
 
 latex_test() ->
-	{ok, Bin} = file:read_file("test/latex_test.erl"),
+	{ok, Bin} = file:read_file("test/latex_test.lerl"),
 	latex(Bin).
 
 markdown(Bin) ->

@@ -2,7 +2,7 @@
 -compile(export_all).
 
 test() ->
-	{ok, Bin} = file:read_file("multiline_test.erl"),
+	{ok, Bin} = file:read_file("multiline_test.lerl"),
 	{ok, Tokens, _} = erl_scan:string(binary_to_list(Bin)),
 	compyl:tokens_to_string(strip_comments(Tokens)).
 
