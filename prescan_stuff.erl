@@ -33,7 +33,8 @@ delatex_test() ->
 	delatex(Bin).
 
 markdown(Bin) ->
-	B = re:replace(Bin, "^(?!    |\\t)[^\\n]+","", [global,multiline]).
+	B = re:replace(Bin, "^(?!    |\\t)[^\\n]+","", [global,multiline]),
+	iolist_to_binary(B).
 	% re:replace(B, ["^\\s*>\\s*"], "", [global,multiline]).
 	
 markdown_test() ->
