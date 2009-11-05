@@ -28,7 +28,17 @@ delatex(Bin, Matches) ->
 					Matches),
 	iolist_to_binary(Out).
 
+delatex_test() ->
+	{ok, Bin} = file:read_file("latex_test.erl"),
+	delatex(Bin).
 
+markdown(Bin) ->
+	B = re:replace(Bin, "^(?!    |\\t)[^\\n]+","", [global,multiline]).
+	% re:replace(B, ["^\\s*>\\s*"], "", [global,multiline]).
+	
+markdown_test() ->
+	{ok, Bin} = file:read_file("markdown_test.md"),
+	markdown(Bin).
 	% {ok, BeginRE} = re:compile("\\\\begin{code}"),
 	% re:run(BinLines, BeginRE).
 
@@ -54,6 +64,3 @@ delatex(Bin, Matches) ->
 	% Rest = N2 * \n ++ binary_substr(Bin, Pos, Length)
 	
 	% etc.	
-delatex_test() ->
-	{ok, Bin} = file:read_file("latex_test.erl"),
-	delatex(Bin).
