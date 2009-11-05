@@ -8,6 +8,9 @@ debird(Bin) ->
 	B = re:replace(Bin, ["^\\s*[^>\\n][^\\n]*"], "", [global,multiline]),
 	re:replace(B, ["^\\s*>\\s*"], "", [global,multiline]).
 
+debird_test() ->
+	{ok, Bin} = file:read_file("test/bird_test.erl"),
+	debird(Bin).
 
 delatex(Bin) ->
 	case re:run(Bin, "(.*?)\\\\begin{code}(.*?)\\\\end{code}", [global, dotall]) of
@@ -29,7 +32,7 @@ delatex(Bin, Matches) ->
 	iolist_to_binary(Out).
 
 delatex_test() ->
-	{ok, Bin} = file:read_file("latex_test.erl"),
+	{ok, Bin} = file:read_file("test/latex_test.erl"),
 	delatex(Bin).
 
 markdown(Bin) ->
@@ -38,7 +41,7 @@ markdown(Bin) ->
 	% re:replace(B, ["^\\s*>\\s*"], "", [global,multiline]).
 	
 markdown_test() ->
-	{ok, Bin} = file:read_file("markdown_test.md"),
+	{ok, Bin} = file:read_file("test/markdown_test.md"),
 	markdown(Bin).
 	% {ok, BeginRE} = re:compile("\\\\begin{code}"),
 	% re:run(BinLines, BeginRE).
