@@ -4,10 +4,7 @@
 % {scan_transform, multiline_comments, strip_comments}
 % {parse_transform, mod}
 
--compile([
-	export_all,
-	{text_transform, prescan_stuff, change_f_to_h}
-]).
+-compile(export_all).
 -compile({scan_transform, multiline_comments, strip_comments}).
 
 ::"this is a comment

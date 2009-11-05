@@ -2,7 +2,7 @@ This is not code, but the stuff prefixed by a > character is.
 
 > -module (bird_test).
 > -compile(export_all).
-> -compile({text_transform, prescan_stuff, debird}).
+> -compile({text_transform, literate, bird}).
 
 hi.
 

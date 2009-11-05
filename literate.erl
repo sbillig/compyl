@@ -1,9 +1,6 @@
 -module (literate).
 -compile(export_all).
 
-change_f_to_h(Bin) ->
-	re:replace(Bin, ["f\\(\\)"], "h()", [global]).
-	
 bird(Bin) ->
 	B = re:replace(Bin, ["^\\s*[^>\\n][^\\n]*"], "", [global,multiline]),
 	B2 = re:replace(B, ["^\\s*>\\s*"], "", [global,multiline]),

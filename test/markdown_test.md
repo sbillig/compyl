@@ -8,7 +8,7 @@ This is an example of an erlang module defined in a markdown file.  Each line of
 
 For this file to compile, we must pass it through the appropriate `text_transform` function.
 
-	-compile({text_transform, prescan_stuff, markdown}).
+	-compile({text_transform, literate, markdown}).
 
 Now we can define some functions, like we normally would:
 
