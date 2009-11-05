@@ -1,7 +1,7 @@
 -module(compyl).
 -compile(export_all).
 
-% {prescan_transform, module, function}
+% {text_transform, module, function}
 % {scan_transform, module, function}
 % {parse_transform, module, function}
 % {parse_transform, module}
@@ -20,7 +20,7 @@
 
 % goal: simple pipeline from text file to compiled code
 % 1) read file
-% 2) prescan_transform
+% 2) text_transform
 % 3) scan tokens
 % 4) scan_transform
 % 5) preprocess with epp (expand macros, etc)
@@ -32,7 +32,7 @@
 % 1) read file to string
 % 1a) scan to tokens
 % 1b) get commands from -compyl(List) attribute
-% 2) prescan_transform (original string)
+% 2) text_transform (original string)
 % 3) scan to tokens
 % 4) scan_transform
 % 4a) collapse tokens to string
@@ -76,8 +76,8 @@ string(S, Options) ->
 	
 	AllOpts = Options ++ FileOpts,
 	
-	% apply prescan_transforms to raw binary
-	S2 = apply_transforms(keyfindall(prescan_transform, 1, AllOpts), S),
+	% apply text_transforms to raw binary
+	S2 = apply_transforms(keyfindall(text_transform, 1, AllOpts), S),
 	S3 = binary_to_list(iolist_to_binary(S2)),
 	
 	% scan to tokens, and apply scan_transforms to list of tokens

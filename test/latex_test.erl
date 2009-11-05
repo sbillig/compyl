@@ -3,7 +3,7 @@ Not code.
 \begin{code}
 	-module (latex_test).
 	-compile(export_all).
-	-compile({prescan_transform, prescan_stuff, delatex}).
+	-compile({text_transform, prescan_stuff, delatex}).
 \end{code}
 
 Also not code.
