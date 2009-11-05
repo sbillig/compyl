@@ -58,14 +58,14 @@ Within `literate.erl` there are currently `text_transform` functions for literat
 
 The appropriate compiler flags are, respectively:
 <pre>
--compile({text_transform, literate, latex}).
--compile({text_transform, literate, markdown}).
--compile({text_transform, literate, bird}).
+{text_transform, literate, latex}
+{text_transform, literate, markdown}
+{text_transform, literate, bird}
 </pre>
 
 There's also support for (ugly) multiline comments:
 <pre>
--compile({scan_transform, multiline_comments, strip_comments}).
+{scan_transform, multiline_comments, strip_comments}
 
 ::"
 this is a 
@@ -94,7 +94,7 @@ which simply finds all lines that don't start with four spaces or a tab, and rep
 
 If you want to apply the `text_transform` function `do_some_stuff` of the module `mytransforms` to a file, just add the compiler option to the file:
 <pre>
--compile({text_transform, mytransforms, do_some_stuff}).
+mpile({text_transform, mytransforms, do_some_stuff}).
 </pre>
 
 #### scan_transform
@@ -135,10 +135,10 @@ Compiling with `compyl` adds 2 steps:
 The way `compyl.erl` (currently) achieves this isn't particularly elegant, but it was quick and it works.  Calling compyl:file("somefile.erl") does the following:
 
 1. read the file in as a binary string
-2. extract `-compile(...).` options from the string, using regular expressions
+2. extract compile options from the string, using regular expressions
 3. apply any `text_transforms` to the string, in the order they're listed in the file
-  eg. if the file contains
-  <pre>-compile([{`text_transform`, mod1, f1}, {`text_transform`, mod1, f2}]).</pre>
+  eg. if the following options are passed to -compile
+  <pre>[{`text_transform`, mod1, f1}, {`text_transform`, mod1, f2}]</pre>
   the following will (essentially) be done:
   <pre>
   {ok, Bin} = file:read_file("whatever.erl"),
