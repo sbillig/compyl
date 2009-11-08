@@ -20,12 +20,15 @@ One obvious application of this is (haskell-style) [literate programming][1].  F
 My Great Math Module
 ====================
 
-This module defines some commonly used math functions.  (Note: This is an erlang module defined in a markdown file.  Any line prefixed with 4 spaces or a tab character will be interpreted as erlang code.)
+This module defines some commonly used math functions.
+(Note: This is an erlang module defined in a markdown file.  Any line prefixed 
+with 4 spaces or a tab character will be interpreted as erlang code.)
 
 	-module(my_math).
 	-export([add/2]).
 
-To treat this file as erlang code and compile it, we must pass it through the appropriate `text_transform` function.
+To treat this file as erlang code and compile it, we must pass it through the 
+appropriate `text_transform` function.
 
 	-compile({text_transform, literate, markdown}).
 
